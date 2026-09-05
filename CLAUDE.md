@@ -51,12 +51,19 @@ App Storeでのリリースは費用対効果が薄いと判断し見送り。�
 の2本柱に絞る。詳細な理由・トレードオフ・将来ストア配信を再検討する条件は
 [marketing/business-plan.md](marketing/business-plan.md) を参照。
 
-**GitHubで公開する前に必ず確認すること**: このリポジトリはこれまでローカルのみで運用していたため、
-Botトークンそのものは`.gitignore`で守られているが、過去に実際のTelegram chat_id(ユーザーの
-Telegram内部ID)が`docs/progress.md`の1コミットに平文で残っていたことが2026-09-06に判明し修正済み
-(値そのものは低リスクだが、公開前の再監査は必須)。公開作業を行うセッションは、
-`git log -p --all | grep`等でBotトークン・chat_id・個人名・メールアドレス等が履歴に残っていないか
-必ず再監査してから `git remote add` / push すること。
+**公開用アイデンティティ(2026-09-06決定)**: このリポジトリの著者表記(LICENSE・git commit)は
+本名ではなく、ハンドルネーム **`lulu_234582`** を使う。コミット用メールは仮に
+`lulu_234582@users.noreply.github.com`(GitHubアカウント作成後、実際のnoreplyアドレスに要差し替え)。
+今後このリポジトリでコミットする際は、ローカルのgit `user.name`/`user.email`が既にこのハンドルに
+設定済みなので変更不要(グローバル設定は変更していない)。
+
+**GitHubで公開する前に必ず確認すること**: `git-filter-repo`で過去コミット履歴を書き換え、
+(1) 実際のTelegram chat_idが`docs/progress.md`の1コミットに平文で残っていた件を除去、
+(2) 全コミットの著者名・メールを本名からハンドルネームへ書き換え済み(2026-09-06実施、
+リポジトリは当時どこにもpushしていなかったため安全に実施できた)。今後もREADME・LICENSE・
+コミット等に本名(Luca Tsunoda)やそれと紐づく個人情報を書かないこと。追加でファイルを公開に
+含める際は、その都度 `git log -p --all | grep` 等で秘密情報・個人情報が紛れていないか再監査してから
+`git remote add` / push すること。
 
 ## Claude Codeとしての行動範囲に関する重要な制約
 

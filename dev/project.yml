@@ -17,6 +17,9 @@ targets:
         NSPhotoLibraryUsageDescription: "撮影した写真・動画をTelegramへ自動転送するために、写真ライブラリへのアクセスが必要です。"
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - phototelegramsync
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.luca.phototelegramsync

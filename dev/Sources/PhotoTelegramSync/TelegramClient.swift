@@ -11,6 +11,11 @@ enum TelegramSendResult: Equatable {
     case failure(String)
 }
 
+enum ChatIDDetectionResult: Equatable {
+    case success(String)
+    case failure(String)
+}
+
 final class TelegramClient {
     /// Bot APIの1ファイルあたりの上限(50MB)。個人アカウント(MTProto)方式は対象外。
     static let maxFileSizeBytes = 50 * 1024 * 1024
@@ -108,5 +113,33 @@ final class TelegramClient {
             return nil
         }
         return retryAfter
+    }
+
+    /// curlやAPIの知識がないユーザーでも設定できるように、getUpdatesを叩いて
+    /// 直近でBotへメッセージを送ってきたchat_idを自動検出する(オンボーディング画面用)。
+    static func fetchLatestChatID(botToken: String) async -> ChatIDDetectionResult {
+        guard !botToken.isEmpty, let url = URL(string: "https://api.telegram.org/bot\(botToken)/getUpdates") else {
+            return .failure("Botトークンの形式が正しくないようです。")
+        }
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+                return .failure("Telegramへの問い合わせに失敗しました。トークンをもう一度確認してください。")
+            }
+            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let ok = json["ok"] as? Bool, ok,
+                  let results = json["result"] as? [[String: Any]] else {
+                return .failure("応答の解析に失敗しました。")
+            }
+            guard let last = results.last,
+                  let message = last["message"] as? [String: Any],
+                  let chat = message["chat"] as? [String: Any],
+                  let chatID = chat["id"] as? Int else {
+                return .failure("まだBotへのメッセージが見つかりません。Botとのトーク画面で1通メッセージを送ってから、もう一度お試しください。")
+            }
+            return .success(String(chatID))
+        } catch {
+            return .failure("通信エラー: \(error.localizedDescription)")
+        }
     }
 }

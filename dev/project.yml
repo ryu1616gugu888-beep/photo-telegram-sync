@@ -29,3 +29,24 @@ targets:
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
         GENERATE_INFOPLIST_FILE: NO
+  PhotoTelegramSyncTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/PhotoTelegramSyncTests
+    settings:
+      base:
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: PhotoTelegramSync
+schemes:
+  PhotoTelegramSync:
+    build:
+      targets:
+        PhotoTelegramSync: all
+        PhotoTelegramSyncTests: [test]
+    test:
+      config: Debug
+      targets:
+        - PhotoTelegramSyncTests

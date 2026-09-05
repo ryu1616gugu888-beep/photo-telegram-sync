@@ -81,26 +81,25 @@ final class PhotoLibraryManager {
         case .image:
             // 写真は自動再圧縮を避けるためdocument形式(force_document相当)で送る。
             let thumb = await thumbnailJPEG(for: asset)
-            return await telegram.sendDocument(fileData: data, filename: "\(asset.localIdentifier).heic",
-                                                caption: caption, thumbnail: thumb)
+            let result = await telegram.sendDocument(fileData: data, filename: "\(asset.localIdentifier).heic",
+                                                       caption: caption, thumbnail: thumb)
+            if case .success = result, asset.mediaSubtypes.contains(.photoLive), state.sendLivePhotoVideoClip,
+               let videoData = await pairedLivePhotoVideoData(for: asset) {
+                _ = await telegram.sendVideo(fileData: videoData, filename: "\(asset.localIdentifier)_live.mov",
+                                              caption: nil)
+            }
+            return result
         default:
             return .failure("unsupported media type for \(asset.localIdentifier)")
         }
     }
 
     private func captionFor(_ asset: PHAsset) -> String {
-        var parts: [String] = []
-        if let date = asset.creationDate {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd HH:mm"
-            parts.append(formatter.string(from: date))
-        }
-        if let location = asset.location {
-            let lat = location.coordinate.latitude
-            let lon = location.coordinate.longitude
-            parts.append("https://maps.google.com/?q=\(lat),\(lon)")
-        }
-        return parts.joined(separator: "\n")
+        CaptionFormatter.caption(
+            creationDate: asset.creationDate,
+            latitude: asset.location?.coordinate.latitude,
+            longitude: asset.location?.coordinate.longitude
+        )
     }
 
     private func originalData(for asset: PHAsset) async -> Data? {
@@ -108,6 +107,24 @@ final class PhotoLibraryManager {
             $0.type == .photo || $0.type == .video || $0.type == .fullSizePhoto
         }) else { return nil }
 
+        return await withCheckedContinuation { continuation in
+            var data = Data()
+            let options = PHAssetResourceRequestOptions()
+            options.isNetworkAccessAllowed = true
+            PHAssetResourceManager.default().requestData(for: resource, options: options, dataReceivedHandler: { chunk in
+                data.append(chunk)
+            }, completionHandler: { error in
+                continuation.resume(returning: error != nil ? nil : data)
+            })
+        }
+    }
+
+    /// Live Photoのペア動画(PHAssetResourceType.pairedVideo)を取得する。
+    /// `SyncStateStore.sendLivePhotoVideoClip`がtrueの場合のみ呼ばれる(デフォルトOFF)。
+    private func pairedLivePhotoVideoData(for asset: PHAsset) async -> Data? {
+        guard let resource = PHAssetResource.assetResources(for: asset).first(where: { $0.type == .pairedVideo }) else {
+            return nil
+        }
         return await withCheckedContinuation { continuation in
             var data = Data()
             let options = PHAssetResourceRequestOptions()

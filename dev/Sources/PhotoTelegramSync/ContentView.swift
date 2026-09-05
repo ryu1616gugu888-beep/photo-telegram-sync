@@ -33,6 +33,16 @@ struct ContentView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(isSyncing)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Label("送信した写真・動画は、あなたのTelegramで開いているBotとのトーク画面にそのまま届きます。アプリ内には一覧表示はありません(Telegramが保管場所です)。", systemImage: "paperplane.fill")
+                    Label("Telegram上のファイルは容量無制限。iPhone本体やiCloudの空き容量を一切消費せずに保存し続けられます。", systemImage: "externaldrive.badge.checkmark")
+                }
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .padding()
             .navigationTitle("写真Telegram同期")

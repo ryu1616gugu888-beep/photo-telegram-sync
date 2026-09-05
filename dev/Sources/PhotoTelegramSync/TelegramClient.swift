@@ -106,7 +106,7 @@ final class TelegramClient {
         }
     }
 
-    private static func parseRetryAfter(from data: Data) -> Int? {
+    static func parseRetryAfter(from data: Data) -> Int? {
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let parameters = json["parameters"] as? [String: Any],
               let retryAfter = parameters["retry_after"] as? Int else {

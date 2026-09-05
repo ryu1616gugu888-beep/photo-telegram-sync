@@ -45,3 +45,31 @@
   「完了: 6件送信 / 0件サイズ超過スキップ / 0件失敗」。iOS版アプリの中核パイプラインは実質的に完成。
 - 次のアクション: Live Photo・大容量動画・FloodWait時の挙動など細かいケースの検証、オンボーディング
   画面自体の実機(またはSimulatorでの手入力)での見た目確認、`marketing/`側の着手。
+
+## 2026-09-06(続き): dev/とmarketing/を並行実施
+
+### dev/ 側
+- キャプションの日付フォーマットをPHAssetに依存しない`CaptionFormatter`へ切り出し、XCTestを追加
+  (`dev/Tests/PhotoTelegramSyncTests/`)。1桁月日・うるう日・複数日付の混在・位置情報付与など
+  7ケースで「撮影日時通りに正しく表示されるか」を回帰テスト化、全て成功。
+- `TelegramClient`にモックURLSession(`MockURLProtocol`)を使ったテストを追加し、実サーバーに触れずに
+  FloodWait(429)時のリトライ成功・リトライ上限到達時の失敗・ちょうど上限サイズの許容、を検証。全て成功。
+- `xcodebuild test`実行結果: **12件全て成功**。
+- 実データでの追加検証: ffmpegで132MBの動画を生成し`xcrun simctl addmedia`でSimulatorに追加 → 同期
+  実行 →「1件サイズ超過スキップ」を実機同然の環境で確認(モックだけでなく実ファイルでも動作確認済み)。
+- **バグ修正**: `sendLivePhotoVideoClip`設定が実装コードに配線されておらず死んでいた
+  (Live Photoの動画クリップを送る設定をONにしても何も起きない状態)。`PHAssetResourceType.pairedVideo`
+  を取得して送信するロジックを実装し、正しく配線した(デフォルトはOFFのまま)。
+- **既知の制約**: 有効なLive Photo(HEIC+MOVのペア、Appleの`ContentIdentifier`メタデータが一致している
+  必要がある)をSimulator上でゼロから合成する試みは失敗(exiftoolでの`ContentIdentifier`書き込みが
+  反映されない)。このため上記の配線修正はコードレビューレベルでは正しいはずだが、実際のLive Photo
+  アセットでの動作確認はまだ済んでいない。**次回、実機で撮ったLive Photoを使って検証する必要あり。**
+- ContentViewに「送信した写真はTelegramの当該Botとのトーク画面で確認できる」「Telegramは容量無制限で
+  iPhone本体/iCloudの容量を消費しない」という案内をUIに追加。実機同然の画面で表示確認済み。
+
+### marketing/ 側
+- note記事下書き(`articles/dev-story-privacy-first-photo-sync.md`): 開発の背景、Telegram容量無制限
+  という強み、プライバシー設計、同期した写真の見方、を含めて構成案を作成。
+- 短編動画台本2本(`videos/`): 「容量、もう気にしてない」フック版、「2万枚移行の裏話」版。
+- SNS投稿文3パターン(`posts/x-thread-prelaunch-teaser.md`)。全て下書きのみ、投稿は未実施
+  (投稿にはユーザー本人の明示的な許可が必要)。

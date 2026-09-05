@@ -93,7 +93,8 @@ xcodebuild test -project PhotoTelegramSync.xcodeproj -scheme PhotoTelegramSync \
 
 ## 今後・既知の制約
 
-- Live Photoの動画クリップ送信は実装済みだが、実機での動作検証はまだ完了していない。
+- Live Photoの動画クリップ送信は実装済みだが、実機での動作検証はまだ完了していない
+  ([issue #1](https://github.com/ryu1616gugu888-beep/photo-telegram-sync/issues/1))。
 - より大きなファイル(2GB/4GB)に対応する個人アカウント(MTProto)方式は将来の拡張候補(未着手)。
 - 詳細な設計判断の経緯は `docs/` 以下のドキュメントを参照。
 

@@ -22,6 +22,8 @@ Xcode本体インストール済み(App Store経由、ユーザー対応済み)�
   いる必要がある)をSimulator上で合成する試みは失敗し、AirDropでの実機→Mac受け渡しでもLive Photoの
   まま届かなかった(ポートレート/通常写真になった)。**次に検証するなら、実機に直接アプリをインストール
   してテストする必要がある**(TestFlightなしでもXcodeから実機ビルド・実行は可能)。
+  GitHub Issueとして記録済み:
+  [#1](https://github.com/ryu1616gugu888-beep/photo-telegram-sync/issues/1)。
 
 `.xcodeproj` は `project.yml` から再生成可能なので意図的にgitignore対象にしている。
 `project.yml`か`Sources/`/`Tests/`を変更したら都度 `xcodegen generate` を実行すること。

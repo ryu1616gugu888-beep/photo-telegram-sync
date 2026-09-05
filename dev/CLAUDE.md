@@ -5,24 +5,26 @@
 認証情報非預かりの原則、api_id/api_hash非共有の原則)。技術知見の全文は
 [../docs/photo_telegram_ios_app_manual.md](../docs/photo_telegram_ios_app_manual.md) を参照。
 
-## 現在のフェーズ
+## 現在の状態(2026-09-06時点)
 
-2026-09-05: 「ユーザー介入は最小限に」という方針(../CLAUDE.md参照)を受け、Step1(ショートカット
-プロトタイプ)は飛ばし、直接Xcodeネイティブアプリの実装に着手した。`project.yml`(XcodeGen定義)と
-`Sources/PhotoTelegramSync/` 配下にSwiftソース一式(Keychain/SyncStateStore/TelegramClient/
-PhotoLibraryManager/OnboardingView/ContentView/App)を書き上げ、`xcodegen generate` で
-`.xcodeproj` の生成まで確認済み(コマンドは通った=project.yml・Info.plist設定は正しい)。
+Xcode本体インストール済み(App Store経由、ユーザー対応済み)。`project.yml`(XcodeGen定義)から
+`xcodegen generate` で `.xcodeproj` を生成してビルド・iOS Simulator実行できる状態。
 
-**重要な既知の制約: このMacにはXcode本体が未インストール**(Command Line Toolsのみ)。
-`xcodebuild`もiOS Simulatorも使えないため、実際のビルド・実機/Simulatorでの動作確認は
-**Xcodeのインストール後でないと行えない**。Xcodeのインストールは App Store 経由でユーザーの
-Apple ID認証が必要なため、Claude Codeは代行できない(安全ルール上のアカウント認証系の制約)。
-→ ユーザーには「App StoreからXcodeをインストールしてほしい」という依頼が必要(数十GBあり時間がかかる)。
-Xcodeインストール後にやること: `cd dev && xcodegen generate && open PhotoTelegramSync.xcodeproj`
-(または `xcodebuild -scheme PhotoTelegramSync -destination 'platform=iOS Simulator,name=iPhone 16' build`)。
+- **中核パイプライン(PhotoKit→Telegram送信)はエンドツーエンドで検証済み**: オンボーディング→
+  PhotoKit権限→「今すぐ同期」→実際のTelegram Bot APIへの送信、まで確認済み。
+- ユニットテスト12件(`dev/Tests/PhotoTelegramSyncTests/`)全て成功: 日付キャプション表示・
+  FloodWait(429)リトライ・50MBサイズ上限。`xcodebuild test -project PhotoTelegramSync.xcodeproj
+  -scheme PhotoTelegramSync -destination 'platform=iOS Simulator,id=<UDID>'` で実行できる。
+- 132MBの実動画ファイル(ffmpegで生成、`xcrun simctl addmedia`でSimulatorに追加)でも
+  サイズ超過スキップの実データ検証済み。
+- **未検証: Live Photoの動画クリップ送信ロジック。** `PHAssetResourceType.pairedVideo`経由で実装は
+  完了しているが、有効なLive Photo(HEIC+MOVペア、Appleの`ContentIdentifier`メタデータが一致して
+  いる必要がある)をSimulator上で合成する試みは失敗し、AirDropでの実機→Mac受け渡しでもLive Photoの
+  まま届かなかった(ポートレート/通常写真になった)。**次に検証するなら、実機に直接アプリをインストール
+  してテストする必要がある**(TestFlightなしでもXcodeから実機ビルド・実行は可能)。
 
 `.xcodeproj` は `project.yml` から再生成可能なので意図的にgitignore対象にしている。
-`project.yml`か`Sources/`を変更したら都度 `xcodegen generate` を実行すること。
+`project.yml`か`Sources/`/`Tests/`を変更したら都度 `xcodegen generate` を実行すること。
 
 ## Telegram Bot(検証用)
 
@@ -31,37 +33,26 @@ Xcodeインストール後にやること: `cd dev && xcodegen generate && open 
 に保存している。`scripts/telegram_api_check.sh` でXcodeなしでもBot API疎通・送信フォーマット
 (document/video)をcurlベースで検証できる。chat_id取得にはユーザーがBotへ1通メッセージを送る操作が必要
 (これも「相手アカウントでの操作」ではなく単なるメッセージ送信なので、都度これくらいの最小操作は
-発生し得る)。
+発生し得る)。DEBUG限定のURLスキーム(`phototelegramsync://debug-onboard?token=...&chatid=...`)で
+Simulator上のオンボーディング手入力をスキップできる(Releaseビルドには含まれない)。
 
 ## アーキテクチャ要点(元マニュアルの要約、詳細は上記リンク先を参照)
 
 - 写真アクセスは `PhotoKit`(`PHPhotoLibrary`権限)。`PHAsset.creationDate`/`location`/
   `mediaSubtypes`(Live Photo判定)/`localIdentifier`(重複排除キー)を使う。
-- Telegramへの送信方式は **Bot API(簡単・50MB上限)** と **個人アカウントMTProto(2GB/4GB・
-  api_id/api_hash+電話番号ログインが必要)** の2択。どちらを採用するか、または両方をユーザーに
-  選ばせるかは未確定 → オンボーディング画面設計時に決める(推奨: まずBot APIのみでMVPを出し、
-  大容量動画のニーズが確認できたらMTProtoを追加)。
-- 送信フォーマットの使い分け(実装時に必ず踏襲すること):
+- 送信フォーマットの使い分け(実装済み、変更する場合は必ず踏襲すること):
   - 写真は原本保持のため **document形式(force_document)** で送る(通常の写真送信は自動再圧縮される)。
   - 動画は逆に **"video"タイプ**で送る(documentだとサムネイルが出ない/再エンコードはされない)。
   - HEICはネイティブに`PHImageManager`でサムネイル生成できるので、旧Pythonスクリプトのような
     `sips`回避策は不要。
-  - Live Photoは `PHAsset.mediaSubtypes.contains(.photoLive)` で判定。動画クリップも送るかは
-    設定項目にする(デフォルト値は未確定 → オンボーディングで決める)。
-- 重複排除は `PHAsset.localIdentifier` を送信済みリストとして永続化(UserDefaults/CoreData)。
+  - Live Photoは `PHAsset.mediaSubtypes.contains(.photoLive)` で判定。動画クリップ送信は
+    `SyncStateStore.sendLivePhotoVideoClip`(デフォルトOFF)で制御(実装済み、実機検証は未了)。
+- 重複排除は `PHAsset.localIdentifier` を送信済みリストとして永続化(UserDefaults)。
 - Telegram送信は `FloodWaitError` 相当のレート制限が発生しうるため、指定秒数待ってリトライする
-  実装が必須。ファイルサイズ上限超過時の挙動(スキップ/警告)も用意する。
-- バックグラウンド実行はiOSの制約で「撮影と同時に完全自動」は信頼性高く実現できない。現実的な
-  選択肢は (1)アプリを開いたときに前回同期以降の差分をまとめて送る「同期ボタン」方式、
-  (2)iOSショートカットの個人用オートメーション連携、(3)`BGAppRefreshTask`併用。採用方式は
-  プロトタイプ検証後に決める。
-
-## 参考にできる既存実装(別セッションで作成済み、Python/Telethon)
-
-ロジックの移植元として、重複排除・キャプション生成・Live Photo判定・EXIFフォールバック・
-レート制限対応をSwiftで書き直す際の仕様書として使う(元マニュアル4章に詳細とファイル名一覧)。
-これらのPythonファイルは別の一時作業環境にあり本セッションには存在しない可能性が高いので、
-再現が必要な場合はユーザーに伝えてロジックを言語化してもらう。
+  実装済み(`TelegramClient`、テスト済み)。ファイルサイズ上限超過時はスキップ(実装・テスト済み)。
+- バックグラウンド実行はiOSの制約で「撮影と同時に完全自動」は信頼性高く実現できない。現在は
+  「アプリを開いたときに前回同期以降の差分をまとめて送る」同期ボタン方式のみ実装。
+  `BGAppRefreshTask`併用は将来検討(未着手)。
 
 ## 決定事項
 
@@ -70,9 +61,18 @@ Xcodeインストール後にやること: `cd dev && xcodegen generate && open 
   (marketing/CLAUDE.md参照)。将来App Store配布に転換する場合は、この決定を覆す形でユーザーと
   再確認してから進めること(Apple Developer Program登録はアカウント作成にあたるため、その時点でも
   登録自体はユーザー本人が行う)。
+- **Telegram送信方式(2026-09-06決定): 当面Bot APIのみ。** 個人アカウント(MTProto)方式は将来の
+  拡張候補として保留(下記「今後の拡張予定」参照)。
+- **Live Photo動画クリップのデフォルト(2026-09-06決定): デフォルトOFFのまま**(静止画のみ送信)。
+  以前の一括移行プロジェクトと同じ既定値。設定でONにできる実装は完了済み。
+- **最低対応iOSバージョン(2026-09-06決定): iOS 17のまま。** 自分専用ビルドのため広い互換性は不要。
 
-## 未確定事項(実装前にユーザーと決める)
+## 今後の拡張予定(今は着手しない)
 
-- Bot API / 個人アカウント方式のどちらを採用するか(両対応も選択肢)
-- Live Photoの動画部分を送るかどうかのデフォルト挙動
-- 対応する最低iOSバージョン
+- **個人アカウント(MTProto)方式の追加**: 2GB/4GB(Premium)まで送信可能になり、Bot APIの50MB上限を
+  超える動画にも対応できる。ただし実装コストが大きい: Telegram公式のSwift向けMTProto実装は無く、
+  TDLib(C++コア)をiOSプロジェクトに組み込むか、サードパーティのSwiftラッパーを使う必要があり、
+  電話番号+SMSコード+(必要なら)2段階認証のログインフローも自前実装しなければならない。
+  着手する場合は、まず「50MB上限で本当に困る場面が実際にあるか」を使ってみてから判断すること。
+  着手時は各ユーザーが自分でmy.telegram.orgからapi_id/api_hashを取得する設計を厳守
+  (../CLAUDE.mdの共有禁止の原則)。

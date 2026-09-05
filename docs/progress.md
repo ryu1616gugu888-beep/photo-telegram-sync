@@ -63,7 +63,13 @@
 - **既知の制約**: 有効なLive Photo(HEIC+MOVのペア、Appleの`ContentIdentifier`メタデータが一致している
   必要がある)をSimulator上でゼロから合成する試みは失敗(exiftoolでの`ContentIdentifier`書き込みが
   反映されない)。このため上記の配線修正はコードレビューレベルでは正しいはずだが、実際のLive Photo
-  アセットでの動作確認はまだ済んでいない。**次回、実機で撮ったLive Photoを使って検証する必要あり。**
+  アセットでの動作確認はまだ済んでいない。
+  ユーザーが実機からAirDropでの受け渡しも試したが、Mac側にLive Photoとして届かなかった
+  (Photos.appで確認した3枚はいずれも「LIVE」ではなく「PORTRAIT」または通常写真として着地した。
+  ポートレートモードとLive Photoは同時撮影できない点、およびAirDrop受け渡し時にLive情報が
+  落ちるケースがある点が要因と考えられる)。**Live Photo動画クリップ送信ロジックの実機検証は
+  引き続き未了。次回、実際にLive Photoモードで撮影した素材を使うか、実機に直接アプリをインストール
+  して検証する必要がある。**
 - ContentViewに「送信した写真はTelegramの当該Botとのトーク画面で確認できる」「Telegramは容量無制限で
   iPhone本体/iCloudの容量を消費しない」という案内をUIに追加。実機同然の画面で表示確認済み。
 

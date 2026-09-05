@@ -9,6 +9,16 @@
 **サムネイル(縦型9:16、作成済み)**: [thumbnails/thumb-storage-anxiety-hook.png](thumbnails/thumb-storage-anxiety-hook.png)
 TikTok/Reels/Shorts共通で使える縦型サムネイル。動画の最初のフレームやサムネイルとして使用。
 
+**ドラフト動画(2026-09-06作成)**: [drafts/video1_storage_anxiety_draft.mp4](drafts/video1_storage_anxiety_draft.mp4)
+(24秒、無音・字幕なしの素材組み立て版)
+- Simulatorでの実機操作の自動記録がタップ入力を検知しない不具合に遭遇したため、
+  実際にキャプチャ済みの静止画(同期画面・初期設定画面)とオリジナルイラストをKen Burns風の
+  ズームで繋いだ構成に切り替えた。構成: タイトルカード(3s)→課題提起スライド(4s)→
+  同期画面(7s)→初期設定画面(6s)→GitHub告知スライド(4s)。
+- 実際のBotユーザー名・chat_idは映り込んでいないことを確認済み。
+- 次のステップ(未実施): ナレーション/字幕の追加、BGM(ロイヤリティフリー)の追加、
+  必要なら実機での操作動画の差し替え。
+
 ## 構成: フック(3秒)→ 問題提起 → 解決策(デモ)→ CTA
 
 | 秒数 | 画面 | セリフ/テロップ |

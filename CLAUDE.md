@@ -60,3 +60,11 @@ photo-telegram-app/
 
 各特化型セッションは、区切りの良いタイミングで `docs/progress.md` に「今何が完了し、次に何をすべきか」を
 一行程度で追記する。これにより、別セッション(別の特化型Claude Code)が背景を再構築する手間を省く。
+
+`docs/progress.md` が進捗の正(source of truth)。加えて、ユーザーがiPhoneからも状況を確認できるように、
+Obsidian Vault(`~/Documents/Obsidian Vault/開発ログ/写真Telegram自動転送アプリ 進捗状況.md`)に
+**要約のみ**を反映するノートを1本置いている。`docs/progress.md` を更新したら、区切りの良いタイミングで
+このObsidianノートの「現在のステータス」「次のアクション」も同じ内容の要約に更新すること
+(Vault側に詳細な技術情報は複製しない)。Vaultの実体パスは
+`~/Library/Application Support/obsidian/obsidian.json` で確認できる(複数Vaultがある場合、
+思い込みで別フォルダに書き込むと同期されない事故が起きるため、初回は必ず実パスを確認する)。

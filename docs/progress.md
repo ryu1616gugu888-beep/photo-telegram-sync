@@ -17,7 +17,8 @@
   50MB上限チェック)/PhotoKit同期ロジック/オンボーディング/メイン画面/App本体)を実装。
   `xcodegen generate` での `.xcodeproj` 生成まで確認済み(Xcode本体なしでも検証できた範囲)。
 - ユーザーが `@unlimited_photo_app_bot` を作成、トークンを共有 → `dev/.env.local`(gitignore対象)に保存。
-  ユーザーがBotへ1通メッセージを送信 → chat_id(`REDACTED_CHAT_ID`)取得に成功。
+  ユーザーがBotへ1通メッセージを送信 → chat_id取得に成功(値は`dev/.env.local`のみに保存、
+  gitには含めない)。
   `scripts/telegram_api_check.sh send_document` で実際に document 送信が成功(疎通確認済み)。
   Telegram送信ロジックの中核(認証・multipart送信)は実機Xcodeなしで実証済み。
 - 次のアクション: ユーザーがApp StoreからXcodeをインストール → `dev/`で`xcodegen generate && open
@@ -110,3 +111,20 @@
 - 詳細・出典URLは`marketing/business-plan.md`5節を参照。
 - 次のアクション: App Store内での直接検索(Web検索とは別)、事業計画書を踏まえたmarketing下書きの
   本文レビュー・自然な日本語への整形。
+
+## 2026-09-06(さらに続き): 配布方針を大きく転換(App Store断念→GitHub公開+Web発信)
+
+- ユーザー判断: **App Storeリリースは費用対効果が薄いため見送り。** 代わりに
+  (1) GitHub上でのソースコード公開(技術者が自分でXcodeビルドして使う形)、
+  (2) note等Web上でのコンテンツ発信、の2本柱に絞る方針に転換。
+- **将来のストア配信リスクを事前調査(Apple公式Review Guidelines)**: 現状の設計(単機能・
+  フルアクセス要求)のままではMinimum Functionality(4.2)等で却下リスクが高いと判明。
+  詳細・出典・再検討する条件(意思決定ゲート)は`marketing/business-plan.md`4-補節に記録。
+- **重要な発見・対応**: GitHub公開を見据えてgit履歴を監査した結果、`docs/progress.md`の1コミットに
+  実際のTelegram chat_id(ユーザーの内部ID)が平文で残っていたため、現在のファイル内容は修正済み
+  (ただし過去コミットの履歴自体はまだ残っている。実際に公開する前に履歴の書き換えが必要)。
+  Botトークン等の秘密情報の漏洩は無いことを確認済み。
+- `CLAUDE.md`(ルート)・`dev/CLAUDE.md`・`marketing/CLAUDE.md`・`marketing/business-plan.md`を
+  この方針転換に合わせて更新済み。
+- 次のアクション: 実際にGitHubリポジトリを公開する前に、過去コミット履歴の書き換え(秘密情報除去)、
+  README整備、ライセンス選定を行う。

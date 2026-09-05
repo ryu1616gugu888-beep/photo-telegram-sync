@@ -3,3 +3,5 @@
 xcuserdata/
 DerivedData/
 .build/
+dev/.env.local
+dev/PhotoTelegramSync.xcodeproj/

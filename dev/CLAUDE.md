@@ -7,12 +7,31 @@
 
 ## 現在のフェーズ
 
-まだXcodeプロジェクトは存在しない。最初の一歩として **iOSショートカットによるコード不要の
-プロトタイプ検証**を先に済ませる方針(詳細手順は [../docs/step1_shortcuts_prototype.md](../docs/step1_shortcuts_prototype.md))。
-この検証はユーザー本人がiPhone上で行うため、Claude Codeはこの検証段階では手順書の作成・改善が
-主な仕事であり、実機操作は代行できない。
+2026-09-05: 「ユーザー介入は最小限に」という方針(../CLAUDE.md参照)を受け、Step1(ショートカット
+プロトタイプ)は飛ばし、直接Xcodeネイティブアプリの実装に着手した。`project.yml`(XcodeGen定義)と
+`Sources/PhotoTelegramSync/` 配下にSwiftソース一式(Keychain/SyncStateStore/TelegramClient/
+PhotoLibraryManager/OnboardingView/ContentView/App)を書き上げ、`xcodegen generate` で
+`.xcodeproj` の生成まで確認済み(コマンドは通った=project.yml・Info.plist設定は正しい)。
 
-プロトタイプで価値検証ができたら、本格実装(Xcodeプロジェクト作成)にこのディレクトリ配下で着手する。
+**重要な既知の制約: このMacにはXcode本体が未インストール**(Command Line Toolsのみ)。
+`xcodebuild`もiOS Simulatorも使えないため、実際のビルド・実機/Simulatorでの動作確認は
+**Xcodeのインストール後でないと行えない**。Xcodeのインストールは App Store 経由でユーザーの
+Apple ID認証が必要なため、Claude Codeは代行できない(安全ルール上のアカウント認証系の制約)。
+→ ユーザーには「App StoreからXcodeをインストールしてほしい」という依頼が必要(数十GBあり時間がかかる)。
+Xcodeインストール後にやること: `cd dev && xcodegen generate && open PhotoTelegramSync.xcodeproj`
+(または `xcodebuild -scheme PhotoTelegramSync -destination 'platform=iOS Simulator,name=iPhone 16' build`)。
+
+`.xcodeproj` は `project.yml` から再生成可能なので意図的にgitignore対象にしている。
+`project.yml`か`Sources/`を変更したら都度 `xcodegen generate` を実行すること。
+
+## Telegram Bot(検証用)
+
+ユーザーが `@unlimited_photo_app_bot` を作成済み。トークンは `dev/.env.local`
+(gitignore対象、平文で保存、Botトークンは疑似APIキーでありユーザーアカウント認証情報そのものではない)
+に保存している。`scripts/telegram_api_check.sh` でXcodeなしでもBot API疎通・送信フォーマット
+(document/video)をcurlベースで検証できる。chat_id取得にはユーザーがBotへ1通メッセージを送る操作が必要
+(これも「相手アカウントでの操作」ではなく単なるメッセージ送信なので、都度これくらいの最小操作は
+発生し得る)。
 
 ## アーキテクチャ要点(元マニュアルの要約、詳細は上記リンク先を参照)
 

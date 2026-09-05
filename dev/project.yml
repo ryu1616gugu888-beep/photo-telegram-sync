@@ -1,0 +1,28 @@
+name: PhotoTelegramSync
+options:
+  bundleIdPrefix: com.luca
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+targets:
+  PhotoTelegramSync:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources/PhotoTelegramSync
+    info:
+      path: Sources/PhotoTelegramSync/Info.plist
+      properties:
+        UILaunchScreen: {}
+        NSPhotoLibraryUsageDescription: "撮影した写真・動画をTelegramへ自動転送するために、写真ライブラリへのアクセスが必要です。"
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.luca.phototelegramsync
+        PRODUCT_NAME: PhotoTelegramSync
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: NO

@@ -6,6 +6,9 @@
 「iPhoneの写真をTelegramに自動バックアップ|容量無制限でiCloud節約」
 概要欄1行目にも同じキーワードを入れ、GitHubリンクを続ける。
 
+**サムネイル(縦型9:16、作成済み)**: [thumbnails/thumb-storage-anxiety-hook.png](thumbnails/thumb-storage-anxiety-hook.png)
+TikTok/Reels/Shorts共通で使える縦型サムネイル。動画の最初のフレームやサムネイルとして使用。
+
 ## 構成: フック(3秒)→ 問題提起 → 解決策(デモ)→ CTA
 
 | 秒数 | 画面 | セリフ/テロップ |

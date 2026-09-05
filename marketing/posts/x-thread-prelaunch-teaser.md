@@ -4,35 +4,40 @@
 
 ## パターンA: 開発進捗の共有
 ```
-iPhoneで撮った写真・動画を、自動でTelegramに送るアプリを作ってる。
+📱→✈️ iPhoneで撮った写真・動画を、自動でTelegramに送るアプリを作ってる。
 
-Telegramは保存容量が無制限だから、iPhoneやiCloudの空き容量を気にしなくていいのが地味に強い。
+☁️ Telegramは保存容量が無制限だから、iPhoneやiCloudの空き容量を気にしなくていいのが地味に強い。
 
-開発者側は写真もパスワードも一切預からない設計にした。
+🔒 開発者側は写真もパスワードも一切預からない設計にした。
 
-ソースコードはGitHubで公開中: https://github.com/ryu1616gugu888-beep/photo-telegram-sync
+⚙️ ソースコードはGitHubで公開中
+https://github.com/ryu1616gugu888-beep/photo-telegram-sync
 
 #個人開発 #iOSアプリ
 ```
 
 ## パターンB: 課題提起型
 ```
-Google Photosの無料枠、iCloudの容量アラート、正直もう疲れた。
+😮‍💨 Google Photosの無料枠、iCloudの容量アラート、正直もう疲れた。
 
-写真の保存先を「容量無制限のTelegram」に変える、というアプリを作っています。撮った写真が自動でTelegram上のBotに届くだけのシンプルな仕組み。
+💡 写真の保存先を「容量無制限のTelegram」に変える、というアプリを作っています。
+撮った写真が自動でTelegram上のBotに届くだけのシンプルな仕組み。
 
-GitHubでソース公開中: https://github.com/ryu1616gugu888-beep/photo-telegram-sync
+⚙️ GitHubでソース公開中
+https://github.com/ryu1616gugu888-beep/photo-telegram-sync
 
 #個人開発
 ```
 
 ## パターンC: 開発の背景(実績訴求)
 ```
-以前、自分のGoogle Photos(2万枚以上)を丸ごとTelegramに移行したことがあって、その知見をもとに「これから撮る分」も自動化するアプリを作っています。
+📦 以前、自分のGoogle Photos(2万枚以上)を丸ごとTelegramに移行したことがあって、
+その知見をもとに「これから撮る分」も自動化するアプリを作っています。
 
-写真は原本画質のまま、動画も再エンコードなしで届くようにこだわりました。
+📷 写真は原本画質のまま、動画も再エンコードなしで届くようにこだわりました。
 
-気になった人はこちら: https://github.com/ryu1616gugu888-beep/photo-telegram-sync
+🔗 気になった人はこちら
+https://github.com/ryu1616gugu888-beep/photo-telegram-sync
 
 #個人開発 #iOS
 ```

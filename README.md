@@ -91,6 +91,11 @@ xcodebuild test -project PhotoTelegramSync.xcodeproj -scheme PhotoTelegramSync \
   (HTTP 429/`retry_after`)には自動リトライで対応。
 - 重複排除は`PHAsset.localIdentifier`を送信済みリストとして永続化。
 
+## 関連記事
+
+開発の背景・設計思想については、こちらのnote記事にまとめています:
+[iPhoneの写真をTelegramへ自動バックアップ — Google Photosの有料化に疲れて作った、容量無制限アプリ](https://note.com/mute_cedum909/n/n83b9772e9c59)
+
 ## 今後・既知の制約
 
 - Live Photoの動画クリップ送信は実装済みだが、実機での動作検証はまだ完了していない

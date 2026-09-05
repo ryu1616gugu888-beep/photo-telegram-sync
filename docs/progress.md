@@ -158,3 +158,13 @@
 - marketing下書き3本(note記事・動画台本2本・SNS投稿3パターン)のCTAに、公開済みGitHubリポジトリ
   (https://github.com/ryu1616gugu888-beep/photo-telegram-sync )へのリンクを追加。
 - README変更をGitHubへpush。
+
+## 2026-09-06(さらに続き): note記事の見た目調整・公開、SNS/動画の視覚素材追加
+
+- note記事にカバー画像(オリジナルイラスト)・見出しスタイル(6箇所)を適用。
+- SNS投稿3パターンに絵文字・行間を追加して可読性向上。
+- 短編動画2本用に縦型(9:16)サムネイル画像を新規作成
+  (`marketing/videos/thumbnails/`)、各台本から参照。
+- **note記事、公開済み**: https://note.com/mute_cedum909/n/n83b9772e9c59
+  (note.com上の表示名: 「lulu@アプリ作りたい」)。公開はユーザー本人が実施。
+- 次のアクション: SNS投稿(X/Threads)の実際の公開判断。

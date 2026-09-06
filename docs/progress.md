@@ -237,3 +237,16 @@
   → `video1_storage_anxiety_final.mp4`、`video2_2万枚移行の裏話_final.mp4`(いずれもそのまま
   投稿できる完成版)。
 - 次のアクション: note記事2本目の執筆、Zenn記事の新規執筆、TikTokへの実際の投稿。
+
+## 2026-09-06(さらに続き): note記事2本目・Zenn記事のドラフト作成
+
+- **note記事2本目**: 「個人開発アプリ、App Storeでの配布をやめてGitHubで公開することにした理由」
+  → `marketing/articles/why-github-not-appstore.md`。前回記事の続編として、App Store断念の
+  意思決定プロセス(Apple Review Guidelines調査結果込み)を正直に共有する内容。
+- **Zenn記事(新規)**: 「PhotoKit + Telegram Bot APIでiPhoneの写真を自動バックアップするアプリを
+  作った(Swift実装解説)」→ `marketing/articles/zenn-technical-deep-dive.md`。note記事より
+  技術者向けに、差分検知・送信フォーマットの使い分け・FloodWaitリトライ・テスト戦略
+  (CaptionFormatterの純粋関数切り出し・MockURLProtocol)・XcodeGen構成をコード付きで解説。
+  Zennは日本語エンジニアの検索流入がnote.comより強いプラットフォームとして選定。
+- いずれも下書きのみ、実際の投稿はユーザー承認後。
+- 次のアクション: 2本の下書きレビュー・実際の投稿判断、TikTokへの動画投稿。

@@ -11,7 +11,21 @@ Xcode本体インストール済み(App Store経由、ユーザー対応済み)�
 `xcodegen generate` で `.xcodeproj` を生成してビルド・iOS Simulator実行できる状態。
 
 - **中核パイプライン(PhotoKit→Telegram送信)はエンドツーエンドで検証済み**: オンボーディング→
-  PhotoKit権限→「今すぐ同期」→実際のTelegram Bot APIへの送信、まで確認済み。
+  PhotoKit権限→「今すぐ同期」→実際のTelegram Bot APIへの送信、まで確認済み(2026-09-06、後述の
+  タップ不具合が発生する"前"に確認したもの)。
+- **既知の不具合(2026-09-06発見、未解決)**: 同日中に、Claude Code iOS SimulatorツールからのUIタップが
+  本アプリの「今すぐ同期」ボタンに対してのみ反応しなくなる事象が発生。切り分けの結果:
+  - Simulatorのタップ機構自体は正常(ホーム画面のアプリアイコン・システムの権限ダイアログのボタンは
+    問題なく反応する)
+  - アプリのプロセス自体はクラッシュせず起動し続けている(`launchctl list`で確認済み)
+  - **ContentViewに追加したUI(容量無制限の説明ボックス)が原因ではない**(該当コードを一時的に
+    削除して再ビルドしても再現した)
+  - **特定のSimulatorデバイスの劣化状態が原因でもない**(全く新規に作成したデバイスでも同じ症状が再現した)
+  - CoreSimulatorServiceの再起動、デバイスの完全な再起動、アプリの完全な再インストールでも解消しない
+  - 根本原因は特定できなかった。最後に確実に成功したタップは、本日の早い段階(Live Photo配線修正・
+    ContentViewのUI追加より前)。それ以降にコードが原因で壊れた形跡はない(上記の切り分けで否定済み)ため、
+    実機またはXcodeからの直接インストール(`xcodebuild ... -destination 'platform=iOS Simulator'`
+    ではなくXcode GUIでのRun)で同じ問題が起きるか確認するのが次の切り分けステップ。
 - ユニットテスト12件(`dev/Tests/PhotoTelegramSyncTests/`)全て成功: 日付キャプション表示・
   FloodWait(429)リトライ・50MBサイズ上限。`xcodebuild test -project PhotoTelegramSync.xcodeproj
   -scheme PhotoTelegramSync -destination 'platform=iOS Simulator,id=<UDID>'` で実行できる。
